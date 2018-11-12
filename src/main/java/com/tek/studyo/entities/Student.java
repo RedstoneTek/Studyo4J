@@ -51,6 +51,7 @@ public class Student implements IUser{
 		return lastName;
 	}
 
+	@Override
 	public String getRole() {
 		return role;
 	}
@@ -59,10 +60,12 @@ public class Student implements IUser{
 		return syncToken;
 	}
 
+	@Override
 	public String getConfigId() {
 		return configId;
 	}
 
+	@Override
 	public String getUserId() {
 		return userId;
 	}

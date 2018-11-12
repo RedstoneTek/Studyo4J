@@ -26,6 +26,7 @@ public class Parent implements IUser{
 		return role != null;
 	}
 
+	@Override
 	public String getConfigId() {
 		return configId;
 	}
@@ -34,10 +35,12 @@ public class Parent implements IUser{
 		return email;
 	}
 
+	@Override
 	public String getRole() {
 		return role;
 	}
 
+	@Override
 	public String getUserId() {
 		return userId;
 	}

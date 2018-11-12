@@ -27,6 +27,7 @@ public class Teacher implements IUser{
 		return objectId;
 	}
 	
+	@Override
 	public String getRole() {
 		return role;
 	}
@@ -47,6 +48,7 @@ public class Teacher implements IUser{
 		return managedIdentifier;
 	}
 
+	@Override
 	public String getConfigId() {
 		return configId;
 	}
