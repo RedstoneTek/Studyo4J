@@ -40,7 +40,7 @@ public class Student implements IUser{
 	
 	@Override
 	public boolean isValid() {
-		return role != null;
+		return role != null && firstName != null && email != null;
 	}
 
 	public String getFirstName() {

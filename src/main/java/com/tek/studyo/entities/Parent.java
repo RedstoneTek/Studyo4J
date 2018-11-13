@@ -23,7 +23,7 @@ public class Parent implements IUser{
 	
 	@Override
 	public boolean isValid() {
-		return role != null;
+		return role != null && email != null;
 	}
 
 	@Override

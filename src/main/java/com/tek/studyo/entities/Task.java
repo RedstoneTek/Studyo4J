@@ -4,35 +4,56 @@ import org.json.JSONObject;
 
 public class Task {
 	
-	private String ownerId, configId, plannedDate, dueDate, assignmentDate, sectionId, type, icon, duePeriodTag, state, objectId, syncToken, contentObjectId, notes;
+	private String title, notes, icon, assignmentDate, plannedDate, dueDate, duePeriodTag, configId, ownerId, sectionId, objectId, syncToken;
 	private boolean important;
 	
 	public Task(JSONObject json) {
-		this.ownerId = json.getString("ownerId");
-		this.configId = json.getString("configId");
-		this.plannedDate = json.getString("plannedDate");
-		this.dueDate = json.getString("dueDate");
-		this.assignmentDate = json.getString("assignmentDate");
-		this.sectionId = JSONObject.NULL.equals(json.get("sectionId")) ? null : json.getString("sectionId");
-		this.type = json.getString("type");
-		this.icon = json.getString("icon");
-		this.duePeriodTag = json.getString("duePeriodTag");
-		this.state = json.getString("state");
-		this.objectId = json.getString("objectId");
-		this.syncToken = json.getString("syncToken");
-		this.important = json.getBoolean("important");
-		if(!json.has("masterContent")) return;
-		JSONObject masterContent = json.getJSONObject("masterContent");
-		this.contentObjectId = masterContent.getString("objectId");
-		this.notes = JSONObject.NULL.equals(masterContent.get("notes")) ? null : masterContent.getString("notes");
+		if(json.has("masterContent")) {
+			JSONObject master = json.getJSONObject("masterContent");
+			this.title = JSONObject.NULL.equals(json.get("title")) ? null : json.getString("title");
+			this.notes = JSONObject.NULL.equals(master.get("notes")) ? null : master.getString("notes");
+			this.icon = json.getString("icon");
+			this.assignmentDate = json.getString("assignmentDate");
+			this.plannedDate = json.getString("plannedDate");
+			this.dueDate = json.getString("dueDate");
+			this.duePeriodTag = JSONObject.NULL.equals(json.get("duePeriodTag")) ? null : json.getString("duePeriodTag");
+			this.configId = json.getString("configId");
+			this.ownerId = json.getString("ownerId");
+			this.sectionId = json.getString("sectionId");
+			this.objectId = json.getString("objectId");
+			this.syncToken = json.getString("syncToken");
+			this.important = json.getBoolean("important");
+		}else {
+			this.title = JSONObject.NULL.equals(json.get("title")) ? null : json.getString("title");
+			this.notes = JSONObject.NULL.equals(json.get("notes")) ? null : json.getString("notes");
+			this.icon = json.getString("icon");
+			this.assignmentDate = json.getString("assignmentDate");
+			this.plannedDate = json.getString("plannedDate");
+			this.dueDate = json.getString("dueDate");
+			this.duePeriodTag = JSONObject.NULL.equals(json.get("duePeriodTag")) ? null : json.getString("duePeriodTag");
+			this.configId = json.getString("configId");
+			this.ownerId = json.getString("ownerId");
+			this.sectionId = JSONObject.NULL.equals(json.get("sectionId")) ? null : json.getString("sectionId");
+			this.objectId = json.getString("objectId");
+			this.syncToken = json.getString("syncToken");
+			this.important = json.getBoolean("important");
+		}
 	}
 
-	public String getOwnerId() {
-		return ownerId;
+	public String getTitle() {
+		return title;
 	}
 
-	public String getConfigId() {
-		return configId;
+	public String getNotes() {
+		return notes;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public String getAssignmentDate() {
+		return assignmentDate;
 	}
 
 	public String getPlannedDate() {
@@ -43,28 +64,20 @@ public class Task {
 		return dueDate;
 	}
 
-	public String getAssignmentDate() {
-		return assignmentDate;
-	}
-
-	public String getSectionId() {
-		return sectionId;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public String getIcon() {
-		return icon;
-	}
-
 	public String getDuePeriodTag() {
 		return duePeriodTag;
 	}
 
-	public String getState() {
-		return state;
+	public String getConfigId() {
+		return configId;
+	}
+
+	public String getOwnerId() {
+		return ownerId;
+	}
+
+	public String getSectionId() {
+		return sectionId;
 	}
 
 	public String getObjectId() {
@@ -75,14 +88,6 @@ public class Task {
 		return syncToken;
 	}
 
-	public String getContentObjectId() {
-		return contentObjectId;
-	}
-
-	public String getNotes() {
-		return notes;
-	}
-	
 	public boolean isImportant() {
 		return important;
 	}

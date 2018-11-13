@@ -187,6 +187,36 @@ public class Studyo {
 	}
 	
 	/**
+	 * This method returns the user tasks under the specified user
+	 * The user tasks contain exams, homework, notes and anything written down in the schedule
+	 * 
+	 * @return This returns the list of Tasks under the specified user
+	 * @throws StudyoQueryException It can throw this error if the request fails to send/receive or if the session token is invalid
+	 */
+	public static List<Task> getUserTasks(Student student) throws StudyoQueryException{
+		try {
+			HttpResponse<JsonNode> response = 
+				Unirest.get(String.format(ENDPOINT_TASKS, student.getUserId(), CONFIG_ID))
+				.header(PARAM_SESSION_TOKEN, SESSION_TOKEN)
+				.asJson();
+			
+			if(response.getStatus() == 200) {
+				ArrayList<Task> userTasks = new ArrayList<Task>();
+				JSONArray jsonResponse = response.getBody().getArray();
+				JSONUtil.parseArrayIntoJSON(jsonResponse).forEach(jsonObject -> {
+					userTasks.add(new Task(jsonObject));
+				});
+				return userTasks;
+			}else {
+				throw new StudyoQueryException();
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+			throw new StudyoQueryException();
+		}
+	}
+	
+	/**
 	 * This method returns the Calendar object associated with the currently authenticated user
 	 * The Calendar object contains the times, courses, timezone, cycleDay, etc of every day of the year
 	 * 
@@ -197,6 +227,32 @@ public class Studyo {
 		try {
 			HttpResponse<JsonNode> response = 
 				Unirest.get(String.format(ENDPOINT_CALENDAR, CONFIG_ID, USER_ID))
+				.header(PARAM_SESSION_TOKEN, SESSION_TOKEN)
+				.asJson();
+			
+			if(response.getStatus() == 200) {
+				JSONObject jsonResponse = response.getBody().getObject();
+				return new Calendar(jsonResponse);
+			}else {
+				throw new StudyoQueryException();
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+			throw new StudyoQueryException();
+		}
+	}
+	
+	/**
+	 * This method returns the Calendar object associated with the specified user
+	 * The Calendar object contains the times, courses, timezone, cycleDay, etc of every day of the year
+	 * 
+	 * @return Returns the calendar object associated with the specified user
+	 * @throws StudyoQueryException It can throw this error if the request fails to send/receive or if the session token is invalid
+	 */
+	public static Calendar getCalendar(Student student) throws StudyoQueryException{
+		try {
+			HttpResponse<JsonNode> response = 
+				Unirest.get(String.format(ENDPOINT_CALENDAR, CONFIG_ID, student.getUserId()))
 				.header(PARAM_SESSION_TOKEN, SESSION_TOKEN)
 				.asJson();
 			
@@ -258,6 +314,10 @@ public class Studyo {
 		return new com.tek.studyo.entities.simplified.Calendar(getSchoolConfiguration(), getCalendar(), getUsers(), getUserTasks());
 	}
 	
+	public static com.tek.studyo.entities.simplified.Calendar getSimplifiedCalendar(Student student) throws StudyoQueryException {
+		return new com.tek.studyo.entities.simplified.Calendar(getSchoolConfiguration(), getCalendar(student), getUsers(), getUserTasks(student));
+	}
+	
 	public static List<Student> getStudents() throws StudyoQueryException {
 		return getUsers().stream()
 				.filter(user -> user.getRole().equals("student"))
@@ -298,6 +358,18 @@ public class Studyo {
 				.filter(user -> user.getRole().equals("teacher"))
 				.map(user -> (Teacher)user)
 				.collect(Collectors.toList());
+	}
+	
+	public static Optional<IUser> getUserById(String id) throws StudyoQueryException {
+		return getUsers().stream()
+				.filter(user -> user.getUserId().equals(id))
+				.findFirst();
+	}
+	
+	public static Optional<IUser> getUserById(List<IUser> users, String id) {
+		return users.stream()
+				.filter(user -> user.getUserId().equals(id))
+				.findFirst();
 	}
 	
 	public static Optional<Student> getStudentById(String id) throws StudyoQueryException {

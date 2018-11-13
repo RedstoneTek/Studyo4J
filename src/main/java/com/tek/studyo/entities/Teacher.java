@@ -19,7 +19,7 @@ public class Teacher implements IUser{
 
 	@Override
 	public boolean isValid() {
-		return role != null;
+		return role != null && firstName != null && email != null;
 	}
 	
 	@Override

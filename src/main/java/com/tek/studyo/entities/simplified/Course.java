@@ -34,6 +34,7 @@ public class Course {
 					this.subject = new Subject(course, course.getSectionId(), school, calendar, users);
 					this.tasks = tasks.stream()
 							.filter(task -> task.getDueDate().equals(date))
+							.filter(task -> task.getSectionId() != null)
 							.filter(task -> task.getSectionId().equals(course.getSectionId()))
 							.collect(Collectors.toList());
 				}
