@@ -61,14 +61,14 @@ public enum EventType {
 	CLICKONGIFTBUTTON("Click on gift button"),
 	CLICKONPLAN("Click on plan");
 	
-	private String eventString;
+	private String typeString;
 	
-	EventType(String eventString){
-		this.eventString = eventString;
+	EventType(String typeString){
+		this.typeString = typeString;
 	}
 	
-	public String getEventString() {
-		return eventString;
+	public String getTypeString() {
+		return typeString;
 	}
 	
 }
