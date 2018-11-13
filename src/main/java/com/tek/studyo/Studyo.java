@@ -16,6 +16,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.tek.studyo.entities.Calendar;
+import com.tek.studyo.entities.IHasAgenda;
 import com.tek.studyo.entities.IUser;
 import com.tek.studyo.entities.Parent;
 import com.tek.studyo.entities.School;
@@ -193,10 +194,10 @@ public class Studyo {
 	 * @return This returns the list of Tasks under the specified user
 	 * @throws StudyoQueryException It can throw this error if the request fails to send/receive or if the session token is invalid
 	 */
-	public static List<Task> getUserTasks(Student student) throws StudyoQueryException{
+	public static List<Task> getUserTasks(IHasAgenda user) throws StudyoQueryException{
 		try {
 			HttpResponse<JsonNode> response = 
-				Unirest.get(String.format(ENDPOINT_TASKS, student.getUserId(), CONFIG_ID))
+				Unirest.get(String.format(ENDPOINT_TASKS, user.getUserId(), CONFIG_ID))
 				.header(PARAM_SESSION_TOKEN, SESSION_TOKEN)
 				.asJson();
 			
@@ -249,10 +250,10 @@ public class Studyo {
 	 * @return Returns the calendar object associated with the specified user
 	 * @throws StudyoQueryException It can throw this error if the request fails to send/receive or if the session token is invalid
 	 */
-	public static Calendar getCalendar(Student student) throws StudyoQueryException{
+	public static Calendar getCalendar(IHasAgenda user) throws StudyoQueryException{
 		try {
 			HttpResponse<JsonNode> response = 
-				Unirest.get(String.format(ENDPOINT_CALENDAR, CONFIG_ID, student.getUserId()))
+				Unirest.get(String.format(ENDPOINT_CALENDAR, CONFIG_ID, user.getUserId()))
 				.header(PARAM_SESSION_TOKEN, SESSION_TOKEN)
 				.asJson();
 			
@@ -314,8 +315,8 @@ public class Studyo {
 		return new com.tek.studyo.entities.simplified.Calendar(getSchoolConfiguration(), getCalendar(), getUsers(), getUserTasks());
 	}
 	
-	public static com.tek.studyo.entities.simplified.Calendar getSimplifiedCalendar(Student student) throws StudyoQueryException {
-		return new com.tek.studyo.entities.simplified.Calendar(getSchoolConfiguration(), getCalendar(student), getUsers(), getUserTasks(student));
+	public static com.tek.studyo.entities.simplified.Calendar getSimplifiedCalendar(IHasAgenda user) throws StudyoQueryException {
+		return new com.tek.studyo.entities.simplified.Calendar(getSchoolConfiguration(), getCalendar(user), getUsers(), getUserTasks(user));
 	}
 	
 	public static List<Student> getStudents() throws StudyoQueryException {
@@ -435,6 +436,11 @@ public class Studyo {
 	public static String getCurrentDate() {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		Date date = new Date();
+		return dateFormat.format(date);
+	}
+	
+	public static String getDate(Date date) {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		return dateFormat.format(date);
 	}
 	

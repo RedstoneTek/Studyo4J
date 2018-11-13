@@ -2,7 +2,7 @@ package com.tek.studyo.entities;
 
 import org.json.JSONObject;
 
-public class Teacher implements IUser{
+public class Teacher implements IUser, IHasAgenda {
 	
 	private String role, firstName, lastName, email, managedIdentifier, configId, objectId, syncToken;
 	
@@ -20,6 +20,10 @@ public class Teacher implements IUser{
 	@Override
 	public boolean isValid() {
 		return role != null && firstName != null && email != null;
+	}
+	
+	public String getFullName() {
+		return firstName + " " + lastName;
 	}
 	
 	@Override
@@ -59,6 +63,11 @@ public class Teacher implements IUser{
 
 	public String getSyncToken() {
 		return syncToken;
+	}
+	
+	@Override
+	public String toString() {
+		return getFullName();
 	}
 	
 }

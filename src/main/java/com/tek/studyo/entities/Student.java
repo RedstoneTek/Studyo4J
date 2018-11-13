@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 import com.tek.studyo.util.JSONUtil;
 
-public class Student implements IUser{
+public class Student implements IUser, IHasAgenda {
 	
 	private String firstName, lastName, role, syncToken, configId, userId, email, objectId;
 	private List<String> selectedSectionIds;
@@ -17,9 +17,9 @@ public class Student implements IUser{
 		this.role = json.getString("role");
 		this.syncToken = json.getString("syncToken");
 		this.configId = json.getString("configId");
-		this.userId = json.getString("userId");
+		this.userId = json.getString("objectId");
 		this.email = json.getString("email");
-		this.objectId = json.getString("objectId");
+		this.objectId = json.getString("userId");
 		this.selectedSectionIds = JSONUtil.parseArrayIntoString(json.getJSONObject("settings").getJSONArray("selectedSectionIds"));
 	}
 	
@@ -41,6 +41,10 @@ public class Student implements IUser{
 	@Override
 	public boolean isValid() {
 		return role != null && firstName != null && email != null;
+	}
+	
+	public String getFullName() {
+		return firstName + " " + lastName;
 	}
 
 	public String getFirstName() {
@@ -80,6 +84,11 @@ public class Student implements IUser{
 
 	public List<String> getSelectedSectionIds() {
 		return selectedSectionIds;
+	}
+	
+	@Override
+	public String toString() {
+		return getFullName();
 	}
 	
 }

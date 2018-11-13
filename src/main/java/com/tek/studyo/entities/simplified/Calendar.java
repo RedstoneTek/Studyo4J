@@ -14,6 +14,7 @@ public class Calendar {
 	private String timezone;
 	private List<SchoolDay> schoolDays;
 	private List<Link> links;
+	private List<IUser> users;
 	
 	public Calendar(School school, com.tek.studyo.entities.Calendar calendar, List<IUser> users, List<Task> tasks) {
 		this.timezone = calendar.getTimezone();
@@ -21,6 +22,7 @@ public class Calendar {
 			.map(schoolDay -> new SchoolDay(schoolDay.getDay(), school, calendar, users, tasks))
 			.collect(Collectors.toList());
 		this.links = school.getLinks();
+		this.users = users;
 	}
 
 	public Optional<SchoolDay> getSchoolDay(String date) {
@@ -37,6 +39,10 @@ public class Calendar {
 
 	public List<Link> getLinks() {
 		return links;
+	}
+	
+	public List<IUser> getUsers() {
+		return users;
 	}
 	
 }
