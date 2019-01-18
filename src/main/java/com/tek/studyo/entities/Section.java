@@ -22,7 +22,7 @@ public class Section {
 		this.managedIdentifier = json.getString("managedIdentifier");
 		this.gradeLevel = JSONObject.NULL.equals(json.get("gradeLevel")) ? null : json.getString("gradeLevel");
 		this.objectId = json.getString("objectId");
-		this.defaultTeacherId = json.getString("defaultTeacherId");
+		this.defaultTeacherId = json.get("defaultTeacherId").equals(JSONObject.NULL) ? null : json.getString("defaultTeacherId");
 		this.schedules = JSONUtil.parseArrayIntoJSON(json.getJSONArray("schedules")).stream().map(jsonobj -> new SectionSchedule(jsonobj)).collect(Collectors.toList());
 	}
 

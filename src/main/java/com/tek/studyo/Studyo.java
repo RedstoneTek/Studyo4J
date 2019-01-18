@@ -1,5 +1,6 @@
 package com.tek.studyo;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import org.json.JSONObject;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.tek.studyo.entities.Calendar;
 import com.tek.studyo.entities.IUser;
 import com.tek.studyo.entities.Parent;
@@ -57,51 +59,46 @@ public class Studyo {
 	 * 
 	 * @param username This is the username or email of the user to authenticate as
 	 * @param password This is the password of the user to authenticate as
+	 * @throws UnirestException 
 	 * @throws StudyoAuthenticationException This can occur if the request fails to send/receive or if the credentials are incorrect
+	 * @throws IOException 
 	 */
-	public static void authenticate(String username, String password) throws StudyoAuthenticationException {
-		try {
-			JSONObject request = new JSONObject();
-			request.put("username", username);
-			request.put("password", password);
-			request.put("_method", METHOD_LOGIN);
-			request.put("_ApplicationId", APPLICATION_ID);
+	public static void authenticate(String username, String password) throws UnirestException, StudyoAuthenticationException {
+		JSONObject request = new JSONObject();
+		request.put("username", username);
+		request.put("password", password);
+		request.put("_method", METHOD_LOGIN);
+		request.put("_ApplicationId", APPLICATION_ID);
+		
+		HttpResponse<JsonNode> response = 
+			Unirest.post(ENDPOINT_LOGIN)
+			.body(request)
+			.asJson();
+		
+		JSONObject jsonResponse = response.getBody().getObject();
+		if(jsonResponse.getInt("code") == 101) throw new StudyoAuthenticationException();
+		SESSION_TOKEN = jsonResponse.getString("sessionToken");
+		OBJECT_ID = jsonResponse.getString("objectId");
 			
-			HttpResponse<JsonNode> response = 
-				Unirest.post(ENDPOINT_LOGIN)
-				.body(request)
-				.asJson();
-			
-			if(response.getStatus() == 200) {
-				JSONObject jsonResponse = response.getBody().getObject();
-				SESSION_TOKEN = jsonResponse.getString("sessionToken");
-				OBJECT_ID = jsonResponse.getString("objectId");
-				
-				HttpResponse<JsonNode> response2 = 
-					Unirest.get(ENDPOINT_USERID + OBJECT_ID)
-					.header(PARAM_SESSION_TOKEN, SESSION_TOKEN)
-					.asJson();
-				
-				if(response2.getStatus() == 200) {
-					JSONObject jsonResponse2 = response2.getBody().getObject();
-					String email = jsonResponse2.getString("email");
-					JSONArray accounts = jsonResponse2.getJSONArray("accounts");
-					Iterator<Object> accountIterator = accounts.iterator();
-					while(accountIterator.hasNext()) {
-						Object accountObject = accountIterator.next();
-						JSONObject account = (JSONObject) accountObject;
-						if(!JSONObject.NULL.equals(account.get("email")) && account.getString("email").equals(email)) {
-							CONFIG_ID = account.getString("configId");
-							USER_ID = account.getString("objectId");
-						}
-					}
-				}else {
-					throw new StudyoAuthenticationException();
+		HttpResponse<JsonNode> response2 = 
+			Unirest.get(ENDPOINT_USERID + OBJECT_ID)
+			.header(PARAM_SESSION_TOKEN, SESSION_TOKEN)
+			.asJson();
+		
+		if(response2.getStatus() == 200) {
+			JSONObject jsonResponse2 = response2.getBody().getObject();
+			String email = jsonResponse2.getString("email");
+			JSONArray accounts = jsonResponse2.getJSONArray("accounts");
+			Iterator<Object> accountIterator = accounts.iterator();
+			while(accountIterator.hasNext()) {
+				Object accountObject = accountIterator.next();
+				JSONObject account = (JSONObject) accountObject;
+				if(!JSONObject.NULL.equals(account.get("email")) && account.getString("email").equals(email)) {
+					CONFIG_ID = account.getString("configId");
+					USER_ID = account.getString("objectId");
 				}
-			}else {
-				throw new StudyoAuthenticationException();
 			}
-		}catch(Exception e) {
+		}else {
 			throw new StudyoAuthenticationException();
 		}
 	}
@@ -181,7 +178,6 @@ public class Studyo {
 				throw new StudyoQueryException();
 			}
 		}catch(Exception e) {
-			e.printStackTrace();
 			throw new StudyoQueryException();
 		}
 	}
@@ -207,7 +203,6 @@ public class Studyo {
 				throw new StudyoQueryException();
 			}
 		}catch(Exception e) {
-			e.printStackTrace();
 			throw new StudyoQueryException();
 		}
 	}
@@ -249,7 +244,6 @@ public class Studyo {
 				throw new StudyoQueryException();
 			}
 		}catch(Exception e) {
-			e.printStackTrace();
 			throw new StudyoQueryException();
 		}
 	}
