@@ -1,6 +1,7 @@
 package com.tek.studyo4j.struct;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Teacher implements IUser {
 	
@@ -87,6 +88,12 @@ public class Teacher implements IUser {
 
 	public boolean isValid() {
 		return firstName != null && !firstName.isEmpty() && lastName != null && !lastName.isEmpty() && email != null && !email.isEmpty();
+	}
+	
+	public List<Section> getTaughtSections(Configuration configuration) {
+		return configuration.getSections().stream()
+				.filter(section -> section.getDefaultTeacherId().equals(objectId))
+				.collect(Collectors.toList());
 	}
 		
 }

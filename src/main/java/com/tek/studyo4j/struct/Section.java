@@ -1,6 +1,8 @@
 package com.tek.studyo4j.struct;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Section {
 	
@@ -58,6 +60,22 @@ public class Section {
 	
 	public List<SectionSchedule> getSchedules() {
 		return schedules;
+	}
+	
+	public Optional<Teacher> getTeacher(List<IUser> users) {
+		Optional<Teacher> teacherOpt = users.stream()
+				.filter(user -> user.getRole().equals(Role.TEACHER))
+				.map(user -> (Teacher)user)
+				.filter(teacher -> teacher.getObjectId().equals(defaultTeacherId))
+				.findFirst();
+		return teacherOpt;
+	}
+	
+	public List<Student> getEnrolledStudents(List<IUser> users) {
+		return users.stream().filter(user -> user.getRole().equals(Role.STUDENT))
+				.map(user -> (Student)user)
+				.filter(student -> student.getSettings().getSelectedSectionIds().contains(objectId))
+				.collect(Collectors.toList());
 	}
 	
 }

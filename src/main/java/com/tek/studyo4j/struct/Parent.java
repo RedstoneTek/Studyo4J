@@ -1,6 +1,7 @@
 package com.tek.studyo4j.struct;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Parent implements IUser {
 	
@@ -62,6 +63,10 @@ public class Parent implements IUser {
 
 	public boolean isValid() {
 		return email != null && !email.isEmpty();
+	}
+	
+	public List<IUser> getChildren(List<IUser> users) {
+		return users.stream().filter(user -> childrenAccountIds.contains(user.getObjectId())).collect(Collectors.toList());
 	}
 	
 }

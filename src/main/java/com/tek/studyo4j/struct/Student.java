@@ -1,6 +1,7 @@
 package com.tek.studyo4j.struct;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Student implements IUser {
 	
@@ -61,6 +62,12 @@ public class Student implements IUser {
 	
 	public StudentSchedule getStudentSchedule(Configuration configuration) {
 		return new StudentSchedule(configuration, this);
+	}
+	
+	public List<Section> getEnrolledSections(Configuration configuration) {
+		return configuration.getSections().stream()
+				.filter(section -> settings.getSelectedSectionIds().contains(section.getObjectId()))
+				.collect(Collectors.toList());
 	}
 	
 }

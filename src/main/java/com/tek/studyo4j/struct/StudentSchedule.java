@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class StudentSchedule {
 	
@@ -17,11 +16,7 @@ public class StudentSchedule {
 	}
 	
 	public void loadClasses(Configuration configuration, Student student) {
-		List<Section> enrolledSections = student.getSettings().getSelectedSectionIds().stream()
-				.map(id -> configuration.getSections().stream().filter(section -> section.getObjectId().equals(id)).findFirst())
-				.filter(Optional<Section>::isPresent)
-				.map(Optional<Section>::get)
-				.collect(Collectors.toList());
+		List<Section> enrolledSections = student.getEnrolledSections(configuration);
 		
 		for(int cycleDay = 1; cycleDay <= configuration.getDaysPerCycle(); cycleDay++) {
 			List<SectionClass> classList = new ArrayList<SectionClass>();
@@ -65,7 +60,7 @@ public class StudentSchedule {
 		return classSchedule.get(cycleDay);
 	}
 	
-	public int formattedTimeToMinutes(String time) {
+	private int formattedTimeToMinutes(String time) {
 		String[] parts = time.split(":");
 		return Integer.parseInt(parts[0]) * 60 + Integer.parseInt(parts[1]);
 	}

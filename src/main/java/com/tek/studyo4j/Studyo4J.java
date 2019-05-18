@@ -128,7 +128,7 @@ public class Studyo4J {
 		return userId;
 	}
 	
-	public static Studyo4J login(String username, String password) throws IOException {
+	public static Studyo4J login(String username, String password) throws IOException, StudyoAuthenticationException {
 		JSONObject payload = new JSONObject();
 		payload.put("username", username);
 		payload.put("password", password);
@@ -136,6 +136,7 @@ public class Studyo4J {
 		payload.put("_ApplicationId", APPLICATION_ID);
 		
 		JSONObject response = new JSONObject(httpPost(ENDPOINT_LOGIN, json(payload)));
+		if(response.has("error")) throw new StudyoAuthenticationException(response.getString("error"));
 		return new Studyo4J(response.getString("sessionToken"), response.getString("objectId"));
 	}
 	
