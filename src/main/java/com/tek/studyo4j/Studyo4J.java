@@ -3,6 +3,7 @@ package com.tek.studyo4j;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,11 +26,13 @@ import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.tek.studyo4j.struct.Configuration;
 import com.tek.studyo4j.struct.IUser;
 import com.tek.studyo4j.struct.Parent;
 import com.tek.studyo4j.struct.Role;
 import com.tek.studyo4j.struct.Role.RoleTypeAdapter;
+import com.tek.studyo4j.struct.SchoolDay;
 import com.tek.studyo4j.struct.Student;
 import com.tek.studyo4j.struct.Teacher;
 
@@ -45,6 +48,7 @@ public class Studyo4J {
 	private static final String ENDPOINT_USER = "https://rest-api.k8s-prod.infra.studyo.co/api/v2/accounts/%s";
 	private static final String ENDPOINT_CONFIGURATION_USERS = "https://rest-api.k8s-prod.infra.studyo.co/api/v2/accounts?configId=%s";
 	private static final String ENDPOINT_CONFIGURATION = "https://rest-api.k8s-prod.infra.studyo.co/api/v2/configs/%s";
+	private static final String ENDPOINT_CALENDAR = "https://rest-api.k8s-prod.infra.studyo.co/api/v2/configs/%s/generated_calendar?accountId=%s";
 	
 	private String sessionToken;
 	private String userId;
@@ -121,6 +125,15 @@ public class Studyo4J {
 		JSONObject response = new JSONObject(httpGet(String.format(ENDPOINT_CONFIGURATION, configurationId), headers()));
 		Configuration configuration = GSON.fromJson(response.toString(), Configuration.class);
 		return configuration;
+	}
+	
+	public List<SchoolDay> getSchoolDays(String configurationId, String userObjectId) throws IOException {
+		JSONObject response = new JSONObject(httpGet(String.format(ENDPOINT_CALENDAR, configurationId, userObjectId), headers()));
+		JSONArray userArray = response.getJSONArray("schoolDays");
+		
+		Type schoolDayListType = new TypeToken<List<SchoolDay>>(){}.getType();
+		List<SchoolDay> schoolDayList = GSON.fromJson(userArray.toString(), schoolDayListType);
+		return schoolDayList;
 	}
 	
 	private Map<String, String> headers() {
