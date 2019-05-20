@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 public class Section {
 	
 	private String objectId;
+	private String sectionNumber;
 	private boolean locked;
 	private boolean hidden;
 	private String title;
@@ -20,6 +21,10 @@ public class Section {
 	
 	public String getObjectId() {
 		return objectId;
+	}
+	
+	public String getSectionNumber() {
+		return sectionNumber;
 	}
 	
 	public boolean isLocked() {

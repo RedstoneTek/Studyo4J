@@ -20,6 +20,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
@@ -48,9 +49,17 @@ public class Studyo4J {
 	private String sessionToken;
 	private String userId;
 	
-	public Studyo4J(String sessionToken, String userId) throws IOException {
+	public Studyo4J(String sessionToken, String userId) {
 		this.sessionToken = sessionToken;
 		this.userId = userId;
+	}
+	
+	public void validate() throws StudyoAuthenticationException {
+		try {
+			getSelf();
+		} catch(JSONException | IOException e) {
+			throw new StudyoAuthenticationException("Invalid session token/user id provided.");
+		}
 	}
 	
 	public IUser getSelf() throws IOException {
